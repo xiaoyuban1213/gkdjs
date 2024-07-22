@@ -217,6 +217,10 @@ h2 {
 	text-transform:uppercase;
   text-shadow: 5px 5px 15px #000;
 	color:#F9F4DC;
+	display: flex;
+    justify-content: center; /* 水平居中 */
+    align-items: center; /* 垂直居中 */
+    height: 25vh; /* 设置容器高度为视口高度 */
 }
 
 /* 盒子 */
