@@ -1,34 +1,93 @@
-<!DOCTYPE HTML>
+<!doctype html>
 <html lang="zh-CN">
 <head>
-<!-- 元标签 -->
-<meta http-equiv="content-type" content="text/html; charset=utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<!-- CSS样式 -->
-<link href="css/style.css" rel="stylesheet" type="text/css">
-<!-- 动态标题将通过JS更新 -->
-<title>高考倒计时-高考加油</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="theme-color" content="#101820">
+	<meta name="description" content="高考倒计时">
+	<link rel="icon" href="favicon.ico">
+	<link rel="stylesheet" href="css/style.css">
+	<title>高考倒计时</title>
 </head>
 <body>
-<!-- 背景容器 -->
-<div class="bg-container snowy">
-	<!-- 页面内容 -->
-	<div class="page-content">
-				<!-- 动态年份标题 -->
-				<h2 class="countdown-title"></h2>
-				<!-- 倒计时部分 -->
-				<div class="snow-box">
-				<div class="countdown"></div>
-		    	</div>
+	<main class="countdown-page">
+		<!-- 高考开始前及祝福期结束后的倒计时视图 -->
+		<section class="hero" data-countdown-view aria-labelledby="page-title">
+			<div class="hero-copy">
+				<p class="eyebrow">奔赴下一程</p>
+				<h1 id="page-title">
+					<span class="title-year" data-target-year>2026</span>
+					<span class="title-name">高考倒计时</span>
+				</h1>
+				<p class="intro">每一段安静积累的日子，都在让未来变得更清晰。</p>
 			</div>
-		</div>
-	</div>
-</div>	
-<!-- JS脚本  -->
-<script type="text/javascript" src="js/jquery.min.js"></script>
-<script type="text/javascript" src="js/countdown.min.js"></script>
-<script type="text/javascript" src="js/jquery.fullpage.min.js"></script>
-<script type="text/javascript" src="js/script.js"></script>
+
+			<div class="countdown-panel">
+				<!-- 闹钟外观装饰；倒计时数字结构由 JavaScript 动态生成 -->
+				<div class="alarm-bells" aria-hidden="true">
+					<span></span>
+					<i></i>
+					<span></span>
+				</div>
+				<div class="panel-header">
+					<p class="panel-label">距离高考开始还有：</p>
+					<p class="target-date">高考第一场开始时间：<span data-target-date>2026年6月7日 09:00</span></p>
+				</div>
+
+				<div data-countdown-body></div>
+			</div>
+		</section>
+
+		<!-- 6 月 7 日 09:00 至 6 月 10 日 00:00 显示的祝福视图 -->
+		<section class="exam-wishes" data-wishes-view aria-labelledby="wishes-title" hidden>
+			<div class="wishes-copy">
+				<p class="eyebrow">此刻，全力以赴</p>
+				<h1 id="wishes-title">
+					<span class="title-year" data-wishes-year>2026</span>
+					<span class="title-name">高考顺利</span>
+				</h1>
+				<p class="wishes-lead">愿你沉着落笔，从容作答。一路积累的认真与坚持，都会在这个高考中得到回应。</p>
+			</div>
+
+			<div class="wishes-panel">
+				<div class="wishes-message">
+					<p class="panel-label">给正在考场上的你</p>
+					<p>认真审题，规范作答，保持自己的节奏。遇到熟悉的题目细心一点，遇到陌生的题目冷静一点。</p>
+				</div>
+				<div class="wish-list" aria-label="高考祝福">
+					<div class="wish-item">
+						<span>01</span>
+						<strong>从容</strong>
+						<p>深呼吸，稳住节奏，把会做的每一道题都做好。</p>
+					</div>
+					<div class="wish-item">
+						<span>02</span>
+						<strong>专注</strong>
+						<p>不被上一场影响，也不为下一场担忧，专心完成当下。</p>
+					</div>
+					<div class="wish-item">
+						<span>03</span>
+						<strong>相信</strong>
+						<p>相信一路走来的积累，也相信此刻认真作答的自己。</p>
+					</div>
+				</div>
+				<div class="wishes-footer">
+					<p>愿你合上笔盖的那一刻，有收剑入鞘般的从容。</p>
+					<p data-exam-progress>高考进行中</p>
+				</div>
+			</div>
+		</section>
+
+		<!-- 所有页面状态共用的版权与鸣谢信息 -->
+		<footer class="site-footer">
+			<div class="footer-meta">
+				<p>Copyright © 2018-<span data-copyright-year>2026</span> Yuban-Network。</p>
+				<p>感谢 <a href="https://github.com/ssdomei232" target="_blank" rel="noopener noreferrer">ssdomei232</a> 提供的部分代码。</p>
+				<p>本站云计算服务由 <a href="https://www.rainyun.com/YuBan_" target="_blank" rel="noopener noreferrer">雨云</a> 提供。</p>
+			</div>
+		</footer>
+	</main>
+
+	<script src="js/script.js"></script>
 </body>
 </html>

@@ -1,97 +1,166 @@
-$(function() {
-    // 获取高考日期（每年6月7日 09:00:00）
-    function getGaokaoDate() {
-        const now = new Date();
-        let year = now.getFullYear();
-        // 设置今年高考时间为6月7日 09:00:00
-        const currentGaokao = new Date(year, 5, 7, 9, 0, 0);
-        
-        // 如果当前时间已过今年高考时间，使用下一年
-        if (now > currentGaokao) {
-            year += 1;
-        }
-        
-        // 返回下个高考时间（含具体时间）
-        return new Date(year, 5, 7, 9, 0, 0);
-    }
+// 高考与祝福页面的时间边界，月份使用 JavaScript 的 0 起始索引。
+const GAOKAO_MONTH = 5;
+const GAOKAO_DAY = 7;
+const GAOKAO_HOUR = 9;
+const EXAM_END_DAY = 10;
 
-    // 格式化日期为插件需要的格式（YYYY/MM/DD HH:mm:ss）
-    function formatDate(date) {
-        const pad = n => String(n).padStart(2, '0');
-        return `${date.getFullYear()}/${pad(date.getMonth() + 1)}/${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
-    }
+// 倒计时内部结构与逻辑一起维护，HTML 只保留组件挂载点。
+const countdownBody = document.querySelector("[data-countdown-body]");
 
-    // 更新标题函数
-    function updateTitles(targetDate) {
-        const year = targetDate.getFullYear();
-        document.title = `${year}年高考倒计时-高考加油`;
-        document.querySelector('.countdown-title').textContent = `${year}年高考倒计时`;
-    }
+countdownBody.innerHTML = `
+	<div class="countdown" role="timer" aria-live="off" aria-label="距离高考开始的剩余时间">
+		<div class="time-unit">
+			<strong data-days>0</strong>
+			<span>天</span>
+		</div>
+		<div class="time-unit">
+			<strong data-hours>0</strong>
+			<span>小时</span>
+		</div>
+		<div class="time-unit">
+			<strong data-minutes>0</strong>
+			<span>分钟</span>
+		</div>
+		<div class="time-unit">
+			<strong data-seconds>0</strong>
+			<span>秒</span>
+		</div>
+	</div>
+	<div class="clock-feet" aria-hidden="true">
+		<span></span>
+		<span></span>
+	</div>
+`;
 
-    const $countdowns = $('.countdown');
-    
-    if ($.isFunction($.fn.countdown)) {
-        $countdowns.each(function() {
-            const $container = $(this);
-            
-            // 创建DOM结构
-            const template = `
-                <div class="countdown-box">
-                    <h4 class="countdown-number js-days">00</h4>
-                    <h4 class="countdown-title">天</h4>
-                </div>
-                <div class="countdown-box">
-                    <h4 class="countdown-number js-hours">00</h4>
-                    <h4 class="countdown-title">时</h4>
-                </div>
-                <div class="countdown-box">
-                    <h4 class="countdown-number js-minutes">00</h4>
-                    <h4 class="countdown-title">分</h4>
-                </div>
-                <div class="countdown-box">
-                    <h4 class="countdown-number js-seconds">00</h4>
-                    <h4 class="countdown-title">秒</h4>
-                </div>
-            `;
-            $container.html(template);
+const elements = {
+	countdownView: document.querySelector("[data-countdown-view]"),
+	wishesView: document.querySelector("[data-wishes-view]"),
+	year: document.querySelector("[data-target-year]"),
+	wishesYear: document.querySelector("[data-wishes-year]"),
+	targetDate: document.querySelector("[data-target-date]"),
+	copyrightYear: document.querySelector("[data-copyright-year]"),
+	examProgress: document.querySelector("[data-exam-progress]"),
+	days: document.querySelector("[data-days]"),
+	hours: document.querySelector("[data-hours]"),
+	minutes: document.querySelector("[data-minutes]"),
+	seconds: document.querySelector("[data-seconds]"),
+};
 
-            const elements = {
-                days: $container.find('.js-days'),
-                hours: $container.find('.js-hours'),
-                minutes: $container.find('.js-minutes'),
-                seconds: $container.find('.js-seconds')
-            };
-
-            function initCountdown() {
-                const targetDate = getGaokaoDate();
-                updateTitles(targetDate);
-
-                // 销毁旧实例（如果存在）
-                if ($container.data('countdown')) {
-                    $container.countdown('remove');
-                }
-
-                // 初始化倒计时（使用格式化后的时间字符串）
-                $container.countdown({
-                    date: formatDate(targetDate),
-                    render: function(data) {
-                        elements.days.text(String(data.days).padStart(2, '0'));
-                        elements.hours.text(String(data.hours).padStart(2, '0'));
-                        elements.minutes.text(String(data.min).padStart(2, '0'));
-                        elements.seconds.text(String(data.sec).padStart(2, '0'));
-                    },
-                    onExpiry: function() {
-                        console.log('倒计时结束，正在重新初始化...');
-                        setTimeout(() => {
-                            initCountdown(); // 重新初始化
-                        }, 1000); // 延迟1秒再重新初始化，避免频繁触发
-                    }
-                });
-            }
-
-            initCountdown();
-        });
-    } else {
-        console.error('倒计时插件未加载，请检查是否正确引入插件');
-    }
+// 目标时间使用访问设备的本地时区格式化。
+const targetDateFormatter = new Intl.DateTimeFormat("zh-CN", {
+	year: "numeric",
+	month: "long",
+	day: "numeric",
+	hour: "2-digit",
+	minute: "2-digit",
+	hour12: false,
 });
+
+function getGaokaoDate(year) {
+	return new Date(year, GAOKAO_MONTH, GAOKAO_DAY, GAOKAO_HOUR);
+}
+
+function getGaokaoEndDate(year) {
+	return new Date(year, GAOKAO_MONTH, EXAM_END_DAY);
+}
+
+// 根据当前时间决定显示当年倒计时、祝福页或下一年倒计时。
+function getPageState(now = new Date()) {
+	const currentYearExam = getGaokaoDate(now.getFullYear());
+	const currentYearExamEnd = getGaokaoEndDate(now.getFullYear());
+
+	if (now >= currentYearExam && now < currentYearExamEnd) {
+		return {
+			mode: "wishes",
+			examDate: currentYearExam,
+			examEnd: currentYearExamEnd,
+		};
+	}
+
+	return {
+		mode: "countdown",
+		examDate: now < currentYearExam
+			? currentYearExam
+			: getGaokaoDate(now.getFullYear() + 1),
+		examEnd: null,
+	};
+}
+
+let pageState = getPageState();
+let activeMode = "";
+
+function updateSharedDetails(now) {
+	elements.copyrightYear.textContent = String(now.getFullYear());
+}
+
+function showCountdownView() {
+	const year = pageState.examDate.getFullYear();
+	elements.countdownView.hidden = false;
+	elements.wishesView.hidden = true;
+	elements.year.textContent = String(year);
+	elements.targetDate.textContent = targetDateFormatter.format(pageState.examDate);
+	document.title = `${year}年高考倒计时`;
+}
+
+function showWishesView() {
+	const year = pageState.examDate.getFullYear();
+	elements.countdownView.hidden = true;
+	elements.wishesView.hidden = false;
+	elements.wishesYear.textContent = String(year);
+	document.title = `${year}年高考顺利`;
+}
+
+function renderCountdown(now) {
+	const remaining = Math.max(0, pageState.examDate.getTime() - now.getTime());
+	const totalSeconds = Math.floor(remaining / 1000);
+	const days = Math.floor(totalSeconds / 86400);
+	const hours = Math.floor((totalSeconds % 86400) / 3600);
+	const minutes = Math.floor((totalSeconds % 3600) / 60);
+	const seconds = totalSeconds % 60;
+
+	elements.days.textContent = String(days);
+	elements.hours.textContent = String(hours);
+	elements.minutes.textContent = String(minutes);
+	elements.seconds.textContent = String(seconds);
+}
+
+// 祝福期按自然日显示高考第 1、2、3 天。
+function renderWishes(now) {
+	const elapsed = now.getTime() - pageState.examDate.getTime();
+	const examDay = Math.min(3, Math.floor(elapsed / 86400000) + 1);
+	elements.examProgress.textContent = `高考第 ${examDay} 天`;
+}
+
+// 每秒重新判断状态，确保跨越边界时无需刷新页面。
+function renderPage() {
+	const now = new Date();
+	const nextState = getPageState(now);
+
+	if (
+		nextState.mode !== pageState.mode
+		|| nextState.examDate.getTime() !== pageState.examDate.getTime()
+	) {
+		pageState = nextState;
+		activeMode = "";
+	}
+
+	updateSharedDetails(now);
+
+	if (activeMode !== pageState.mode) {
+		activeMode = pageState.mode;
+		if (pageState.mode === "wishes") {
+			showWishesView();
+		} else {
+			showCountdownView();
+		}
+	}
+
+	if (pageState.mode === "wishes") {
+		renderWishes(now);
+	} else {
+		renderCountdown(now);
+	}
+}
+
+renderPage();
+setInterval(renderPage, 1000);

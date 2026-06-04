@@ -1,256 +1,728 @@
-/* 全局元素 */
-body {
-	margin:0;
-	padding:0;
-	width:100%;
-	height:100%;
-	color:#fff;
-	font-size:18px;
-	font-weight:400;
-	font-family:'Oswald', sans-serif;
-	background-color:#000;
-	line-height:1;
+:root {
+	color-scheme: dark;
+	font-family: Inter, "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+	font-synthesis: none;
+	--ink: #f6f3ed;
+	--muted: rgba(246, 243, 237, 0.7);
+	--line: rgba(255, 255, 255, 0.18);
+	--surface: rgba(12, 21, 29, 0.78);
+	--accent: #f2c66d;
+	--accent-cool: #86c9c8;
 }
 
-/* 容器 */
-.bg-container {
+/* 基础页面与背景 */
+* {
+	box-sizing: border-box;
+}
+
+html {
+	min-width: 320px;
+	background: #101820;
+}
+
+body {
+	margin: 0;
+	min-width: 320px;
+	min-height: 100vh;
+	color: var(--ink);
+	background: #101820;
+}
+
+a {
+	color: inherit;
+}
+
+.countdown-page,
+.error-page {
 	position: relative;
-	width: 100%;
-	height: 100vh;
-	background: url('../img/bj.png') no-repeat center center;
+	isolation: isolate;
+	display: grid;
+	min-height: 100vh;
+	min-height: 100svh;
+	overflow: hidden;
+	background-image: linear-gradient(90deg, rgba(8, 17, 24, 0.9) 0%, rgba(8, 17, 24, 0.66) 47%, rgba(8, 17, 24, 0.2) 100%), url("../img/bj.png");
+	background-position: center;
 	background-size: cover;
 }
 
-.page-content {
-	top:0;
-	left:0;
-	width:100%;
-	height:100%;
-	z-index:110;
-	position:absolute;
-	text-align:center;
-	margin:0 auto 0 auto;
+.countdown-page {
+	grid-template-rows: 1fr auto;
+	padding: 30px clamp(20px, 4vw, 76px) 24px;
 }
 
-.snow-box
-{
-	width:90%;
-	min-height:80px;
-	margin:0 auto 0 auto;
-	background-color:#f4f4f4;
-	-moz-border-radius:3px;
-	-webkit-border-radius:16px;
-	border-radius:16px;
-	position:relative;
-	-moz-box-shadow:0 8px 20px rgba(0,0,0,0.8);
-	-webkit-box-shadow:0 8px 20px rgba(0,0,0,0.8);
-	box-shadow:0 8px 20px rgba(0,0,0,0.8);
+.countdown-page::after,
+.error-page::after {
+	position: absolute;
+	z-index: -1;
+	inset: 0;
+	background: linear-gradient(180deg, rgba(8, 17, 24, 0.06), rgba(8, 17, 24, 0.42));
+	content: "";
 }
 
-.shadow-box
-{
-	padding:16px 0;
-	background:-moz-radial-gradient(center, ellipse cover,  rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.23) 50%, rgba(0,0,0,0.2) 55%, rgba(0,0,0,0) 75%, rgba(0,0,0,0) 100%); /* FF3.6-15 */
-	background:-webkit-radial-gradient(center, ellipse cover,  rgba(0,0,0,0.5) 0%,rgba(0,0,0,0.23) 50%,rgba(0,0,0,0.2) 55%,rgba(0,0,0,0) 75%,rgba(0,0,0,0) 100%); /* Chrome10-25,Safari5.1-6 */
-	background:radial-gradient(ellipse at center,  rgba(0,0,0,0.5) 0%,rgba(0,0,0,0.23) 50%,rgba(0,0,0,0.2) 55%,rgba(0,0,0,0) 75%,rgba(0,0,0,0) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-	filter:progid:DXImageTransform.Microsoft.gradient( startColorstr='#80000000', endColorstr='#00000000',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
-}
-
-@media screen and (max-width:740px), screen and (max-height:740px)
-{
-	.snow-box:before
-	{
-		top:-6px;
-		background-size:contain;
-		height:32px;
-	}
-	
-	.snow-box:after
-	{
-		top:-20px;
-		right:-30px;
-		width:57px;
-		height:54px;
-	}
-}
-
-@media screen and (orientation:portrait)
-{
-	.snow-box
-	{
-		max-width:80vw;
-	}
-}
-
-@media screen and (orientation:landscape)
-{
-	.snow-box
-	{
-		max-width:72vh;
-	}
-}
-
-@media screen and (max-width:359px)
-{
-	.shadow-box
-	{
-		padding:10px 0;
-	}
-}
-
-/* SNOW BOX COUNTER */
-
-.snow-box .countdown
-{
-	text-align:center;
-	display:block;
-	clear:both;
-	padding-top:5px;
-}
-
-.snow-box .countdown:before,
-.snow-box .countdown:after
-{
-	content:'';
-	display:block;
-	clear:both;
-	width:100%;
-	height:1px;
-}
-
-.snow-box .countdown .countdown-box
-{
-	display:block;
-	width:25%;
-	float:left;
-}
-
-.snow-box .countdown .countdown-number
-{
-	margin:0;
-	font-weight:700;
-	display:block;
-	color:#43a6f3;
-	border-bottom:1px solid #b4b4b4;
-	padding:15px 0;
-}
-
-.snow-box .countdown .countdown-title
-{
-	margin:0;
-	color:#555;
-	display:block;
-	text-transform:uppercase;
-	background-color:#e7e7e7;
-	border-top:1px solid #fff;
-	padding:15px 0;
-}
-
-.snow-box .countdown .countdown-box:first-child .countdown-title
-{
-	-webkit-border-bottom-left-radius: 16px;
-	border-bottom-left-radius: 16px;
-}
-
-.snow-box .countdown .countdown-box:last-child .countdown-title
-{
-	-webkit-border-bottom-right-radius: 16px;
-	border-bottom-right-radius: 16px;
-}
-
-@media screen and (orientation:portrait)
-{
-	.snow-box .countdown .countdown-number
-	{
-		font-size:8vw;
-	}
-	
-	.snow-box .countdown .countdown-title
-	{
-		font-size:2.2vh;
-	}
-}
-
-@media screen and (orientation:landscape)
-{
-	.snow-box .countdown .countdown-number
-	{
-		font-size:6.2vh;
-	}
-	
-	.snow-box .countdown .countdown-title
-	{
-		font-size:2.8vh;
-	}
-}
-
-/* 页面内容 */
-body
-{
-	margin:0;
-	padding:0;
-	width:100%;
-	height:100%;
-	color:#fff;
-	font-size:18px;
-	font-weight:400;
-	font-family:'Oswald', sans-serif;
-	background-color:#000;
-	line-height:1;
-	
-}
-
-h1, h3, h4, h5, h6
-{
-	font-size:40px;
-	font-weight: 900;
-	margin-bottom:20px;
-	font-family: Helvetica, sans-serif;
-	text-transform:uppercase;
-	color:#F9F4DC;
-}
-h2 {
-	font-size:50px;
-	font-weight: 900;
-	margin-bottom:20px;
-	font-family: Helvetica, sans-serif;
-	text-transform:uppercase;
-  text-shadow: 5px 5px 15px #000;
-	color:#F9F4DC;
+/* 公共页脚与版权磨砂卡片 */
+.site-footer {
 	display: flex;
-    justify-content: center; /* 水平居中 */
-    align-items: center; /* 垂直居中 */
-    height: 25vh; /* 设置容器高度为视口高度 */
+	align-items: center;
+	justify-content: flex-end;
+	gap: 24px;
+	color: var(--muted);
+	font-size: 13px;
 }
 
-/* 盒子 */
-.box{
-    background-color: rgba(102,204,255);
-    width: 200px;
-    height: 100px;
-    border: 3px solid #ff0;
-    bottom: 50px;
-    left: 10px;
-    border-radius: 10px;
-    position: fixed;
-		}
-    		.box::before{
-    			content: '';
-    			width: 0;
-    			height: 0;
-    			border: 20px solid;
-    			position: absolute;
-    			bottom: -40px;
-    			left: 15px;
-    			border-color:  #ff0 transparent transparent;
-    		}
-    		 .box::after{
-    			content: '';
-    			width: 0;
-    			height: 0;
-    			border: 20px solid;
-    			position: absolute;
-    			bottom: -36px;
-    			left: 15px;
-    			border-color:  #66ccff transparent transparent;
-    		}
+.site-footer p {
+	margin: 0;
+}
+
+.footer-meta {
+	position: relative;
+	overflow: hidden;
+	display: grid;
+	gap: 5px;
+	min-width: min(100%, 360px);
+	padding: 12px 16px;
+	border: 1px solid rgba(255, 255, 255, 0.18);
+	border-radius: 8px;
+	background: rgba(18, 27, 34, 0.48);
+	box-shadow:
+		0 14px 40px rgba(0, 0, 0, 0.2),
+		inset 0 1px 0 rgba(255, 255, 255, 0.08);
+	backdrop-filter: blur(18px) saturate(115%);
+	-webkit-backdrop-filter: blur(18px) saturate(115%);
+	text-align: right;
+}
+
+.footer-meta::before {
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(145deg, rgba(255, 255, 255, 0.06), transparent 50%);
+	content: "";
+	pointer-events: none;
+}
+
+.footer-meta p,
+.footer-meta a {
+	position: relative;
+}
+
+.footer-meta a {
+	color: var(--accent);
+	text-decoration: none;
+	text-underline-offset: 3px;
+}
+
+.footer-meta a:hover {
+	text-decoration: underline;
+}
+
+.footer-meta a:focus-visible {
+	border-radius: 2px;
+	outline: 2px solid var(--accent);
+	outline-offset: 3px;
+}
+
+/* 倒计时主视觉与标题 */
+.hero {
+	display: grid;
+	align-content: center;
+	grid-template-columns: minmax(580px, 0.9fr) minmax(680px, 1.1fr);
+	gap: clamp(40px, 4vw, 80px);
+	width: 100%;
+	padding: clamp(56px, 10vh, 120px) 0;
+}
+
+.hero[hidden],
+.exam-wishes[hidden] {
+	display: none;
+}
+
+.hero-copy {
+	align-self: center;
+	max-width: 680px;
+}
+
+.eyebrow,
+.panel-label {
+	margin: 0;
+	color: var(--accent);
+	font-size: 12px;
+	font-weight: 700;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+}
+
+h1 {
+	max-width: 760px;
+	margin: 16px 0 18px;
+	font-family: Georgia, "Songti SC", "STSong", serif;
+	font-size: clamp(56px, 6.5vw, 104px);
+	font-weight: 500;
+	line-height: 0.98;
+	letter-spacing: 0;
+	text-wrap: balance;
+}
+
+.title-year,
+.title-name {
+	display: block;
+}
+
+.title-name {
+	margin-top: 14px;
+	white-space: nowrap;
+}
+
+.intro {
+	max-width: 620px;
+	margin: 0;
+	color: var(--muted);
+	font-size: clamp(16px, 1.5vw, 20px);
+	line-height: 1.8;
+}
+
+/* 磨砂闹钟倒计时组件 */
+.countdown-panel {
+	position: relative;
+	isolation: isolate;
+	align-self: center;
+	width: 100%;
+	max-width: 920px;
+	margin-left: auto;
+	border: 1px solid rgba(255, 255, 255, 0.22);
+	border-radius: 14px;
+	background: rgba(18, 27, 34, 0.58);
+	box-shadow:
+		0 28px 80px rgba(0, 0, 0, 0.3),
+		inset 0 1px 0 rgba(255, 255, 255, 0.12);
+	backdrop-filter: blur(24px) saturate(120%);
+	-webkit-backdrop-filter: blur(24px) saturate(120%);
+}
+
+.countdown-panel::before {
+	position: absolute;
+	z-index: -1;
+	inset: 0;
+	border-radius: inherit;
+	background:
+		linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent 42%),
+		linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(5, 12, 18, 0.12));
+	content: "";
+	pointer-events: none;
+}
+
+.countdown-panel::after {
+	position: absolute;
+	top: 0;
+	right: 12%;
+	left: 12%;
+	height: 1px;
+	background: rgba(255, 255, 255, 0.32);
+	content: "";
+	pointer-events: none;
+}
+
+.alarm-bells {
+	position: absolute;
+	top: -24px;
+	right: 34px;
+	left: 34px;
+	display: flex;
+	align-items: flex-end;
+	justify-content: space-between;
+	height: 28px;
+	pointer-events: none;
+}
+
+.alarm-bells span {
+	position: relative;
+	width: 46px;
+	height: 22px;
+	border: 1px solid rgba(255, 255, 255, 0.26);
+	border-bottom: 0;
+	border-radius: 28px 28px 5px 5px;
+	background: rgba(18, 27, 34, 0.62);
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14);
+	backdrop-filter: blur(18px);
+	-webkit-backdrop-filter: blur(18px);
+}
+
+.alarm-bells span::after {
+	position: absolute;
+	bottom: -7px;
+	left: 50%;
+	width: 2px;
+	height: 8px;
+	background: rgba(255, 255, 255, 0.32);
+	content: "";
+	transform: translateX(-50%) rotate(20deg);
+	transform-origin: top;
+}
+
+.alarm-bells span:last-child::after {
+	transform: translateX(-50%) rotate(-20deg);
+}
+
+.alarm-bells i {
+	align-self: center;
+	width: min(42%, 260px);
+	height: 8px;
+	margin-top: 4px;
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	border-bottom: 0;
+	border-radius: 50% 50% 0 0;
+	opacity: 0.7;
+}
+
+.clock-feet {
+	position: absolute;
+	right: 46px;
+	bottom: -12px;
+	left: 46px;
+	display: flex;
+	justify-content: space-between;
+	pointer-events: none;
+}
+
+.clock-feet span {
+	width: 44px;
+	height: 12px;
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	border-top: 0;
+	border-radius: 0 0 8px 8px;
+	background: rgba(18, 27, 34, 0.7);
+	transform: skewX(-18deg);
+}
+
+.clock-feet span:last-child {
+	transform: skewX(18deg);
+}
+
+.panel-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 24px;
+	padding: 20px 28px 0;
+}
+
+.panel-header .panel-label {
+	font-size: 15px;
+	letter-spacing: 0.06em;
+}
+
+.target-date {
+	margin: 0;
+	color: var(--muted);
+	font-size: 13px;
+}
+
+.target-date span {
+	color: var(--ink);
+	font-size: 14px;
+	font-weight: 600;
+}
+
+.countdown {
+	display: grid;
+	grid-template-columns: 1.35fr repeat(3, 1fr);
+	padding: 28px 16px 26px;
+}
+
+.time-unit {
+	position: relative;
+	display: grid;
+	gap: 8px;
+	min-width: 0;
+	place-items: center;
+	padding: clamp(20px, 3vw, 34px) clamp(12px, 2vw, 24px);
+	text-align: center;
+}
+
+.time-unit:not(:last-child)::after {
+	position: absolute;
+	top: 24%;
+	right: 0;
+	width: 1px;
+	height: 52%;
+	background: rgba(255, 255, 255, 0.15);
+	content: "";
+}
+
+.time-unit strong {
+	color: var(--ink);
+	text-shadow: 0 1px 16px rgba(255, 255, 255, 0.08);
+	font-family: "Arial Rounded MT Bold", "DIN Alternate", "Trebuchet MS", system-ui, sans-serif;
+	font-size: clamp(52px, 5.8vw, 88px);
+	font-weight: 600;
+	font-variant-numeric: tabular-nums;
+	line-height: 1;
+	letter-spacing: 0;
+}
+
+.time-unit span {
+	color: rgba(246, 243, 237, 0.58);
+	font-size: 13px;
+}
+
+.site-footer {
+	padding-top: 20px;
+}
+
+/* 高考期间祝福视图 */
+.exam-wishes {
+	display: grid;
+	align-content: center;
+	grid-template-columns: minmax(520px, 0.85fr) minmax(680px, 1.15fr);
+	gap: clamp(44px, 5vw, 96px);
+	width: 100%;
+	padding: clamp(46px, 8vh, 96px) 0;
+}
+
+.wishes-copy {
+	align-self: center;
+	max-width: 680px;
+}
+
+.wishes-lead {
+	max-width: 600px;
+	margin: 0;
+	color: var(--muted);
+	font-size: clamp(16px, 1.5vw, 20px);
+	line-height: 1.9;
+}
+
+.wishes-panel {
+	align-self: center;
+	width: 100%;
+	max-width: 920px;
+	margin-left: auto;
+	border: 1px solid var(--line);
+	border-radius: 8px;
+	background: var(--surface);
+	box-shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
+	backdrop-filter: blur(18px);
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+	.countdown-panel {
+		background: rgba(12, 21, 29, 0.94);
+	}
+}
+
+.wishes-message {
+	padding: 24px 28px;
+	border-bottom: 1px solid var(--line);
+}
+
+.wishes-message p:last-child {
+	max-width: 720px;
+	margin: 12px 0 0;
+	color: var(--muted);
+	font-size: 14px;
+	line-height: 1.8;
+}
+
+.wish-list {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+}
+
+.wish-item {
+	min-width: 0;
+	padding: 28px;
+	border-right: 1px solid var(--line);
+}
+
+.wish-item:last-child {
+	border-right: 0;
+}
+
+.wish-item span {
+	color: var(--accent);
+	font-family: "SFMono-Regular", Consolas, monospace;
+	font-size: 12px;
+}
+
+.wish-item strong {
+	display: block;
+	margin-top: 24px;
+	font-family: Georgia, "Songti SC", "STSong", serif;
+	font-size: clamp(28px, 3vw, 42px);
+	font-weight: 500;
+}
+
+.wish-item p {
+	margin: 12px 0 0;
+	color: var(--muted);
+	font-size: 13px;
+	line-height: 1.75;
+}
+
+.wishes-footer {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 24px;
+	padding: 18px 28px;
+	border-top: 1px solid var(--line);
+	color: var(--muted);
+	font-size: 12px;
+}
+
+.wishes-footer p {
+	margin: 0;
+}
+
+.wishes-footer p:last-child {
+	flex: none;
+	color: var(--accent-cool);
+}
+
+/* 中等宽度下改为上下布局 */
+@media (max-width: 1180px) {
+	.hero,
+	.exam-wishes {
+		grid-template-columns: 1fr;
+		gap: clamp(34px, 6vh, 60px);
+		width: min(100%, 900px);
+	}
+
+	.countdown-panel,
+	.wishes-panel {
+		max-width: 800px;
+		margin-left: 0;
+	}
+}
+
+/* 404 页面 */
+.error-page {
+	place-items: center;
+	padding: 24px;
+	text-align: center;
+}
+
+.error-content {
+	width: min(100%, 620px);
+}
+
+.error-code {
+	margin: 0;
+	color: var(--accent);
+	font-family: Georgia, serif;
+	font-size: clamp(96px, 22vw, 180px);
+	font-weight: 500;
+	line-height: 0.9;
+	letter-spacing: 0;
+}
+
+.error-content h1 {
+	margin: 24px auto 12px;
+	font-size: clamp(30px, 6vw, 48px);
+}
+
+.error-content p {
+	margin: 0 auto 30px;
+	color: var(--muted);
+	line-height: 1.7;
+}
+
+.home-link {
+	display: inline-flex;
+	align-items: center;
+	min-height: 42px;
+	padding: 0 18px;
+	border: 1px solid rgba(255, 255, 255, 0.32);
+	border-radius: 6px;
+	color: var(--ink);
+	background: rgba(12, 21, 29, 0.72);
+	font-size: 14px;
+	font-weight: 700;
+	text-decoration: none;
+	transition: border-color 160ms ease, background-color 160ms ease;
+}
+
+.home-link:hover {
+	border-color: var(--accent);
+	background: rgba(12, 21, 29, 0.92);
+}
+
+.home-link:focus-visible {
+	outline: 3px solid var(--accent);
+	outline-offset: 4px;
+}
+
+/* 手机端紧凑布局 */
+@media (max-width: 680px) {
+	.countdown-page {
+		padding: 20px 16px 18px;
+	}
+
+	.hero {
+		align-content: end;
+		padding: 48px 0 32px;
+	}
+
+	.exam-wishes {
+		align-content: end;
+		gap: 28px;
+		padding: 42px 0 28px;
+	}
+
+	h1 {
+		margin-top: 12px;
+		font-size: clamp(42px, 15vw, 64px);
+	}
+
+	.title-name {
+		margin-top: 8px;
+	}
+
+	.intro {
+		max-width: 36ch;
+		font-size: 14px;
+	}
+
+	.countdown-panel {
+		margin-top: 0;
+		border-radius: 10px;
+	}
+
+	.wishes-lead {
+		font-size: 14px;
+		line-height: 1.75;
+	}
+
+	.wishes-message {
+		padding: 17px 16px;
+	}
+
+	.wishes-message p:last-child {
+		font-size: 12px;
+	}
+
+	.wish-list {
+		grid-template-columns: 1fr;
+	}
+
+	.wish-item {
+		display: grid;
+		grid-template-columns: 28px 64px 1fr;
+		gap: 8px;
+		align-items: start;
+		padding: 14px 16px;
+		border-right: 0;
+		border-bottom: 1px solid var(--line);
+	}
+
+	.wish-item:last-child {
+		border-bottom: 0;
+	}
+
+	.wish-item strong {
+		margin-top: 0;
+		font-size: 20px;
+	}
+
+	.wish-item p {
+		margin: 0;
+		font-size: 11px;
+		line-height: 1.6;
+	}
+
+	.wishes-footer {
+		display: block;
+		padding: 14px 16px;
+		line-height: 1.6;
+	}
+
+	.wishes-footer p:last-child {
+		margin-top: 5px;
+	}
+
+	.panel-header {
+		display: block;
+		padding: 16px 16px 0;
+	}
+
+	.panel-header .panel-label {
+		font-size: 13px;
+	}
+
+	.countdown {
+		grid-template-columns: repeat(4, 1fr);
+		padding: 20px 4px 18px;
+	}
+
+	.time-unit {
+		gap: 7px;
+		padding: 16px 6px;
+		text-align: center;
+	}
+
+	.time-unit strong {
+		font-size: clamp(30px, 10vw, 42px);
+	}
+
+	.alarm-bells {
+		top: -17px;
+		right: 20px;
+		left: 20px;
+		height: 20px;
+	}
+
+	.alarm-bells span {
+		width: 32px;
+		height: 16px;
+	}
+
+	.alarm-bells i {
+		height: 6px;
+	}
+
+	.clock-feet {
+		right: 26px;
+		bottom: -8px;
+		left: 26px;
+	}
+
+	.clock-feet span {
+		width: 30px;
+		height: 8px;
+	}
+
+	.target-date {
+		margin-top: 7px;
+		font-size: 11px;
+	}
+
+	.target-date span {
+		font-size: 12px;
+	}
+
+	.site-footer {
+		display: flex;
+		padding-top: 14px;
+		font-size: 11px;
+		line-height: 1.6;
+	}
+
+	.footer-meta {
+		gap: 2px;
+		margin-top: 8px;
+		padding: 10px 12px;
+		text-align: left;
+	}
+}
+
+/* 降级与无障碍偏好 */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+	.footer-meta {
+		background: rgba(12, 21, 29, 0.92);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	* {
+		scroll-behavior: auto !important;
+		transition-duration: 0.01ms !important;
+	}
+}
