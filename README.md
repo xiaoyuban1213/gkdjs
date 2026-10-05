@@ -1,8 +1,8 @@
 # 高考倒计时
 
-一个无第三方运行时依赖的高考倒计时静态网页。页面会根据当前设备时间，在倒计时状态和高考祝福状态之间自动切换。
+一个无第三方运行时依赖的高考倒计时静态网页。页面以北京时间（Asia/Shanghai）为准，在倒计时状态和高考祝福状态之间自动切换。
 
-[在线预览](https://xiaoyuban1213.github.io/gkdjs/)
+[在线预览](https://gk.yuban.cloud/)
 
 ## 页面状态
 
@@ -12,7 +12,7 @@
 | 6 月 7 日 09:00 至 6 月 10 日 00:00 | 显示高考祝福页面 |
 | 6 月 10 日 00:00 之后 | 自动进入下一年高考倒计时 |
 
-所有时间均以访问设备的本地时区为准。页面每秒检查一次状态，跨越时间边界时无需刷新。
+所有时间均以北京时间（Asia/Shanghai）为准，与访问设备的时区设置无关。页面每秒检查一次状态，跨越时间边界时无需刷新。
 
 ## 功能
 
@@ -22,7 +22,7 @@
 - 磨砂玻璃闹钟风格倒计时组件
 - 桌面端与移动端响应式布局
 - 自定义 404 页面
-- 可直接部署到 GitHub Pages
+- 可部署到腾讯云 EO Pages
 
 ## 项目结构
 
@@ -34,7 +34,6 @@
 ├── js/script.js                # 时间状态、倒计时与动态 DOM
 ├── img/bj.png                  # 页面背景图
 ├── favicon.ico
-└── .github/workflows/static.yml
 ```
 
 ## 本地预览
@@ -63,7 +62,7 @@ const EXAM_END_DAY = 10;
 - 语义化 HTML
 - CSS Grid、媒体查询、`backdrop-filter`
 - 原生 JavaScript、DOM API、`Intl.DateTimeFormat`
-- GitHub Actions 与 GitHub Pages
+- 腾讯云 EO Pages 静态托管
 
 ## 鸣谢
 

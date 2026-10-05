@@ -3,9 +3,20 @@ const GAOKAO_MONTH = 5;
 const GAOKAO_DAY = 7;
 const GAOKAO_HOUR = 9;
 const EXAM_END_DAY = 10;
+const BEIJING_TIME_ZONE = "Asia/Shanghai";
+const BEIJING_UTC_OFFSET_HOURS = 8;
+const DAY_MILLISECONDS = 86400000;
+
+function requireElement(selector) {
+	const element = document.querySelector(selector);
+	if (!element) {
+		throw new Error(`Required page element not found: ${selector}`);
+	}
+	return element;
+}
 
 // 倒计时内部结构与逻辑一起维护，HTML 只保留组件挂载点。
-const countdownBody = document.querySelector("[data-countdown-body]");
+const countdownBody = requireElement("[data-countdown-body]");
 
 countdownBody.innerHTML = `
 	<div class="countdown" role="timer" aria-live="off" aria-label="距离高考开始的剩余时间">
@@ -33,21 +44,21 @@ countdownBody.innerHTML = `
 `;
 
 const elements = {
-	countdownView: document.querySelector("[data-countdown-view]"),
-	wishesView: document.querySelector("[data-wishes-view]"),
-	year: document.querySelector("[data-target-year]"),
-	wishesYear: document.querySelector("[data-wishes-year]"),
-	targetDate: document.querySelector("[data-target-date]"),
-	copyrightYear: document.querySelector("[data-copyright-year]"),
-	examProgress: document.querySelector("[data-exam-progress]"),
-	days: document.querySelector("[data-days]"),
-	hours: document.querySelector("[data-hours]"),
-	minutes: document.querySelector("[data-minutes]"),
-	seconds: document.querySelector("[data-seconds]"),
+	countdownView: requireElement("[data-countdown-view]"),
+	wishesView: requireElement("[data-wishes-view]"),
+	year: requireElement("[data-target-year]"),
+	wishesYear: requireElement("[data-wishes-year]"),
+	targetDate: requireElement("[data-target-date]"),
+	copyrightYear: requireElement("[data-copyright-year]"),
+	examProgress: requireElement("[data-exam-progress]"),
+	days: requireElement("[data-days]"),
+	hours: requireElement("[data-hours]"),
+	minutes: requireElement("[data-minutes]"),
+	seconds: requireElement("[data-seconds]"),
 };
 
-// 目标时间使用访问设备的本地时区格式化。
 const targetDateFormatter = new Intl.DateTimeFormat("zh-CN", {
+	timeZone: BEIJING_TIME_ZONE,
 	year: "numeric",
 	month: "long",
 	day: "numeric",
@@ -56,24 +67,44 @@ const targetDateFormatter = new Intl.DateTimeFormat("zh-CN", {
 	hour12: false,
 });
 
+const beijingDatePartsFormatter = new Intl.DateTimeFormat("en-US", {
+	timeZone: BEIJING_TIME_ZONE,
+	year: "numeric",
+	month: "numeric",
+	day: "numeric",
+});
+
+function getBeijingDateParts(date) {
+	return Object.fromEntries(
+		beijingDatePartsFormatter.formatToParts(date)
+			.filter(({ type }) => type !== "literal")
+			.map(({ type, value }) => [type, Number(value)]),
+	);
+}
+
 function getGaokaoDate(year) {
-	return new Date(year, GAOKAO_MONTH, GAOKAO_DAY, GAOKAO_HOUR);
+	return new Date(Date.UTC(
+		year,
+		GAOKAO_MONTH,
+		GAOKAO_DAY,
+		GAOKAO_HOUR - BEIJING_UTC_OFFSET_HOURS,
+	));
 }
 
 function getGaokaoEndDate(year) {
-	return new Date(year, GAOKAO_MONTH, EXAM_END_DAY);
+	return new Date(Date.UTC(year, GAOKAO_MONTH, EXAM_END_DAY, -BEIJING_UTC_OFFSET_HOURS));
 }
 
 // 根据当前时间决定显示当年倒计时、祝福页或下一年倒计时。
 function getPageState(now = new Date()) {
-	const currentYearExam = getGaokaoDate(now.getFullYear());
-	const currentYearExamEnd = getGaokaoEndDate(now.getFullYear());
+	const currentYear = getBeijingDateParts(now).year;
+	const currentYearExam = getGaokaoDate(currentYear);
+	const currentYearExamEnd = getGaokaoEndDate(currentYear);
 
 	if (now >= currentYearExam && now < currentYearExamEnd) {
 		return {
 			mode: "wishes",
 			examDate: currentYearExam,
-			examEnd: currentYearExamEnd,
 		};
 	}
 
@@ -81,20 +112,18 @@ function getPageState(now = new Date()) {
 		mode: "countdown",
 		examDate: now < currentYearExam
 			? currentYearExam
-			: getGaokaoDate(now.getFullYear() + 1),
-		examEnd: null,
+			: getGaokaoDate(currentYear + 1),
 	};
 }
 
-let pageState = getPageState();
-let activeMode = "";
+let pageState = null;
 
 function updateSharedDetails(now) {
-	elements.copyrightYear.textContent = String(now.getFullYear());
+	elements.copyrightYear.textContent = String(getBeijingDateParts(now).year);
 }
 
 function showCountdownView() {
-	const year = pageState.examDate.getFullYear();
+	const year = getBeijingDateParts(pageState.examDate).year;
 	elements.countdownView.hidden = false;
 	elements.wishesView.hidden = true;
 	elements.year.textContent = String(year);
@@ -103,7 +132,7 @@ function showCountdownView() {
 }
 
 function showWishesView() {
-	const year = pageState.examDate.getFullYear();
+	const year = getBeijingDateParts(pageState.examDate).year;
 	elements.countdownView.hidden = true;
 	elements.wishesView.hidden = false;
 	elements.wishesYear.textContent = String(year);
@@ -126,8 +155,11 @@ function renderCountdown(now) {
 
 // 祝福期按自然日显示高考第 1、2、3 天。
 function renderWishes(now) {
-	const elapsed = now.getTime() - pageState.examDate.getTime();
-	const examDay = Math.min(3, Math.floor(elapsed / 86400000) + 1);
+	const currentDate = getBeijingDateParts(now);
+	const examDate = getBeijingDateParts(pageState.examDate);
+	const currentDay = Date.UTC(currentDate.year, currentDate.month - 1, currentDate.day);
+	const examDayStart = Date.UTC(examDate.year, examDate.month - 1, examDate.day);
+	const examDay = Math.min(3, Math.floor((currentDay - examDayStart) / DAY_MILLISECONDS) + 1);
 	elements.examProgress.textContent = `高考第 ${examDay} 天`;
 }
 
@@ -135,25 +167,20 @@ function renderWishes(now) {
 function renderPage() {
 	const now = new Date();
 	const nextState = getPageState(now);
+	const stateChanged = pageState === null
+		|| nextState.mode !== pageState.mode
+		|| nextState.examDate.getTime() !== pageState.examDate.getTime();
+	pageState = nextState;
 
-	if (
-		nextState.mode !== pageState.mode
-		|| nextState.examDate.getTime() !== pageState.examDate.getTime()
-	) {
-		pageState = nextState;
-		activeMode = "";
-	}
-
-	updateSharedDetails(now);
-
-	if (activeMode !== pageState.mode) {
-		activeMode = pageState.mode;
+	if (stateChanged) {
 		if (pageState.mode === "wishes") {
 			showWishesView();
 		} else {
 			showCountdownView();
 		}
 	}
+
+	updateSharedDetails(now);
 
 	if (pageState.mode === "wishes") {
 		renderWishes(now);
